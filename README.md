@@ -3,10 +3,10 @@
 ## User
 ### Table name: Users
   attributes: 
-    * id : bigint serial primary key 
-    * username : string 50 chars max, unique, not null
-    + displayName : string 50, not null
-    - email : string 100 chars max , unique, not null
+  * id : bigint serial primary key 
+* username : string 50 chars max, unique, not null
++ displayName : string 50, not null
+- email : string 100 chars max , unique, not null
     + passwordHash : string 100 chars max, not null
     emailVerifiedAt : timestamp
     website : string 100 chars max
