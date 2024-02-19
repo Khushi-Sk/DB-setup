@@ -22,10 +22,6 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       type: DataTypes.BIGINT
     },
-    content: {
-      type:  DataTypes.STRING(280),
-      allowNull:false
-    },
     userId:{
       type: DataTypes.BIGINT,
       allowNull:false,
@@ -34,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         key:"id"
       }
     } ,
+    content: {
+      type:  DataTypes.STRING(280),
+      allowNull:false
+    }, 
     type: {
       type: DataTypes.ENUM,
       values: ["post", "repost", "comment"],

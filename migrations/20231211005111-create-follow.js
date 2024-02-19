@@ -9,10 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      followedAt: {
-        type: Sequelize.DATE,
-        allowNull: false
-      },
       followerId: {
         type: Sequelize.BIGINT,
         allowNull: false,
@@ -29,6 +25,10 @@ module.exports = {
           key: "id"
         }
       },
+      followedAt: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -38,6 +38,13 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+
+    await queryInterface.addConstraint("Follows", {
+      fields: ["followerId", "followingId"],
+      type: "unique",
+      name: "follower_following_constraint"
+    })
+
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Follows');

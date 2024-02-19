@@ -20,10 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BIGINT,
       allowNull: false
     },
-    followedAt:{
-      type: DataTypes.DATE,
-      allowNull:false
-    } ,
     followerId:{
       type: DataTypes.BIGINT,
       allowNull:false,
@@ -40,6 +36,10 @@ module.exports = (sequelize, DataTypes) => {
         key: "id"
       }
     },
+    followedAt:{
+      type: DataTypes.DATE,
+      allowNull:false
+    } , 
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false
@@ -51,6 +51,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Follow',
-  });
+    validate: {
+      sameUser() {
+        if (this.followerId === this.followingId) {
+            throw new Error('User cannot follow themselves.')
+            }
+          }
+       }
+    });
   return Follow;
 };

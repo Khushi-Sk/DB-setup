@@ -9,6 +9,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
+      userId: {
+        type: Sequelize.BIGINT,
+        allowNull:false,
+        references:{
+          model: "Users",
+          key:"id"
+        }
+      },
       content: {
         type: Sequelize.STRING(280),
         allowNull: false
@@ -19,14 +27,6 @@ module.exports = {
         defaultValue: "post",
         allowNull:false
     },
-      userId: {
-        type: Sequelize.BIGINT,
-        allowNull:false,
-        references:{
-          model: "Users",
-          key:"id"
-        }
-      },
       postedAt: {
         type: Sequelize.DATE,
         allowNull:false
