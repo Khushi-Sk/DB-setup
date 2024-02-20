@@ -7,13 +7,17 @@ const jwt = require("jsonwebtoken")
 const db = require("./models/index.js");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const cors = require("cors");
 const SECRET_KEY = "hgdksjhdsijhkdsfhjiosjd"
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', "default-src 'none'; font-src 'self' https://fonts.gstatic.com;");
+    next()
+});
 
 app.get("/healthcheck", async (req, res) => {
     try{
