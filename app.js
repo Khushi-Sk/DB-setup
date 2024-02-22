@@ -5,9 +5,10 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken")
 
 const db = require("./models/index.js");
+require('dotenv').config()
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4040;
 const cors = require("cors");
 const SECRET_KEY = "hgdksjhdsijhkdsfhjiosjd"
 
