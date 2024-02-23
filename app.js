@@ -26,9 +26,9 @@ app.use((req, res, next) => {
     next()
 });
 
-const { data, error } = await supabase.functions.invoke('hello-world', {
-  body: { name: 'Functions' },
-})
+// const { data, error } = await supabase.functions.invoke('hello-world', {
+//   body: { name: 'Functions' },
+// })
 
 app.get("/healthcheck", async (req, res) => {
     try{
