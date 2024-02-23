@@ -37,7 +37,8 @@ app.get("/healthcheck", async (req, res) => {
         res.status(200).send("I'm healthy")
     } catch (error) {
         await db.sequelize.close()
-        res.status(500).send("Unable to connect to database!")
+        console.log(`Error encountered: ${error}`)
+        res.status(500).send(error)//"Unable to connect to database!")
     }
 })
 
