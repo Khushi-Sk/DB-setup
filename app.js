@@ -5,15 +5,30 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken")
 
 const db = require("./models/index.js");
+require('dotenv').config()
+
+
+const { createClient } = require('@supabase/supabase-js')
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseKey = process.env.ANON_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 4040;
 const cors = require("cors");
 const SECRET_KEY = "hgdksjhdsijhkdsfhjiosjd"
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', "default-src 'none'; font-src 'self' https://fonts.gstatic.com;");
+    next()
+});
+
+// const { data, error } = await supabase.functions.invoke('hello-world', {
+//   body: { name: 'Functions' },
+// })
 
 app.get("/healthcheck", async (req, res) => {
     try{
@@ -22,7 +37,8 @@ app.get("/healthcheck", async (req, res) => {
         res.status(200).send("I'm healthy")
     } catch (error) {
         await db.sequelize.close()
-        res.status(500).send("Unable to connect to database!")
+        console.log(`Error encountered: ${error}`)
+        res.status(500).send(error)//"Unable to connect to database!")
     }
 })
 
