@@ -1,12 +1,19 @@
+const compression = require('compression')
 const express = require("express")
 const {User, Post, Like, Follow, Retweet} = require("./models/index.js")
 const bcrypt = require("bcryptjs")
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken")
+const RateLimit = require("express-rate-limit")
 
 const db = require("./models/index.js");
 require('dotenv').config()
 
+const limiter = RateLimit({
+    windowMs: 15 * 60 * 1000, //15 minutes
+    limit: 100  // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+ // max: 40
+})
 
 const { createClient } = require('@supabase/supabase-js')
 const supabaseUrl = process.env.SUPABASE_URL
@@ -16,15 +23,21 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 const app = express();
 const port = process.env.PORT || 4040;
 const cors = require("cors");
+const { where } = require("sequelize");
 const SECRET_KEY = "hgdksjhdsijhkdsfhjiosjd"
 
+app.use(compression())
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
-app.use((req, res, next) => {
-    res.setHeader('Content-Security-Policy', "default-src 'none'; font-src 'self' https://fonts.gstatic.com;");
-    next()
-});
+app.use(limiter)
+// app.get('env')
+
+
+// app.use((req, res, next) => {
+//     res.setHeader('Content-Security-Policy', "default-src 'none'; font-src 'self' https://fonts.gstatic.com;");
+//     next()
+// });
 
 // const { data, error } = await supabase.functions.invoke('hello-world', {
 //   body: { name: 'Functions' },
@@ -71,22 +84,35 @@ app.post("/api/signup", async (req, res) => {
 });
 
 const authenticateUser = async (req, res, next) => {
-    // console.log(res.body)
-    const user_id_auth = req.body.user_id
+    console.log(req.body)
+    const verify_email  = await req.body.email
+    const user_id_auth = await User.findOne({
+        where: { email : verify_email}
+    })
     if (!user_id_auth) {
         return res.status(401).send("Unauthorized");
     }
+    // console.log(user_id_auth.dataValues.id)
+    const token = jwt.sign(
+        {
+        email: req.body.email,
+        id: user_id_auth.dataValues.id
+    }, 
+        SECRET_KEY,
+        {expiresIn: "3h"}
+    )
     try {
-        const jwtData = jwt.decode(user_id_auth, SECRET_KEY)
-        console.log(jwtData)
-        req.current_user = await User.findOne({where: { id: jwtData.user_id } })
+        const jwt_verify = jwt.verify(token, SECRET_KEY)
+        const data = jwt.decode(token, SECRET_KEY)
+        console.log(data)
+        req.current_user = await User.findOne({where: { id: data.id } })
         next()
     } catch (error) {
         res.status(401).send(`Invalid token., Error: ${error}`)
     }
 };
 
-app.post("/api/login", async (req, res) => {
+app.post("/api/login", authenticateUser, async (req, res) => {
     
     const { email, password } = req.body;
     if (!(email && password)) {
@@ -118,10 +144,11 @@ app.post("/api/login", async (req, res) => {
     }
 });
 
-app.post("/api/feed", authenticateUser, async(req, res) => {
+app.post("/api/feed", async(req, res) => {
     try{
-        const user_id_auth = await req.body.user_id
-        const jwtData = jwt.decode(user_id_auth, SECRET_KEY)
+        const user_id_auth = await req.body
+        console.log(user_id_auth.user_id)
+        const jwtData = jwt.decode(user_id_auth.user_id, SECRET_KEY)
 
         const posts = await Post.findAll()
         res.status(201).json({ posts: posts, email: jwtData.email});
@@ -131,11 +158,11 @@ app.post("/api/feed", authenticateUser, async(req, res) => {
     console.log("yaya feed endpoint!")
 })
 
-app.post("/api/userId", authenticateUser, async (req,res) => {
+app.post("/api/userId", async (req,res) => {
     try{
-        const user_id_auth = req.body.user_id
+        const user_id_auth = await req.body.user_id
         const jwtData = jwt.decode(user_id_auth, SECRET_KEY)
-        const userId = await User.findOne({where: {id: jwtData.user_id}})
+        const userId = await User.findOne({where: {id: jwtData.id}})
         console.log(userId)
         res.status(200).send({userId})
     } catch (err) {
@@ -289,7 +316,7 @@ app.get("/api/retweetCount/:id", async(req, res) => {
 })
 
 app.listen(port, () => {
-    console.log("App running on port 3000.")
+    console.log(`App running on port ${port}.`)
 });
 
 

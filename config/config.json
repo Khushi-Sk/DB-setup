@@ -7,17 +7,17 @@
     "dialect": "postgres"
   },
   "test": {
-    "username": "postgres",
-    "password": "",
+    "username": "postgres.ducauojzternfoaepygb",
+    "password": "Imfh5nyIkirfKqry",
     "database": "postgres",
-    "host": "pooler.supabase.com",
+    "host": "aws-0-eu-west-2.pooler.supabase.com",
     "dialect": "postgres"
   },
   "production": {
-    "username": "postgres",
-    "password": "",
+    "username": "postgres.ducauojzternfoaepygb",
+    "password": "Imfh5nyIkirfKqry",
     "database": "postgres",
-    "host": "pooler.supabase.com",
+    "host": "aws-0-eu-west-2.pooler.supabase.com",
     "dialect": "postgres"
   }
 }
