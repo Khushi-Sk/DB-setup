@@ -4,16 +4,16 @@ const {User, Post, Like, Follow, Retweet} = require("./models/index.js")
 const bcrypt = require("bcryptjs")
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken")
-const RateLimit = require("express-rate-limit")
+// const RateLimit = require("express-rate-limit")
 
 const db = require("./models/index.js");
 require('dotenv').config()
 
-const limiter = RateLimit({
-    windowMs: 15 * 60 * 1000, //15 minutes
-    limit: 100  // Limit each IP to 100 requests per `window` (here, per 15 minutes)
- // max: 40
-})
+// const limiter = RateLimit({
+//     windowMs: 15 * 60 * 1000, //15 minutes
+//     limit: 100  // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+//  // max: 40
+// })
 
 const { createClient } = require('@supabase/supabase-js')
 const supabaseUrl = process.env.SUPABASE_URL
@@ -30,7 +30,7 @@ app.use(compression())
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
-app.use(limiter)
+// app.use(limiter)
 // app.get('env')
 
 
