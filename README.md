@@ -1,8 +1,8 @@
 To Run this server in your localhost:
 
--Clone the repo
--Run commands in terminal like: npm install
--Then run command in terminal: node app
+1)Clone the repo
+2)Run commands in terminal like: npm install
+3)Then run command in terminal: node app
 
 # **Database Schema Design in Twitter**
 
